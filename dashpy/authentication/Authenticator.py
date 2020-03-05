@@ -8,13 +8,16 @@ def authenticate(passphrase, hwtoken):
     try:
         with open(homedir + '/.dashpy/authentication.json') as json_file:
             validation_data = json.load(json_file)
-            print(validation_data)
     except Exception:
         print("DashPy could not locate the authentication file. Make sure it is located under ~/.dashpy")
+    passphrase_hash = sha384()
+    passphrase_hash.update((passphrase + validation_data["PWSalt"]).encode('utf-8'))
+    hwtoken_hash = sha384()
+    hwtoken_hash.update(hwtoken.encode('utf-8'))
 
 
 def main():
-    authenticate("abc123", "ichbineinhwtoken")
+    authenticate("123qweasd", "dasistderhashvomhwtoken")
 
 if __name__ == '__main__':
     main()
