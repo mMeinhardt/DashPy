@@ -10,7 +10,7 @@ def authenticate(passphrase, hwtoken):
             validation_data = json.load(json_file)
             print(validation_data)
     except Exception:
-        print("DashPy could not locate the authentication file.")
+        print("DashPy could not locate the authentication file. Make sure it is located under ~/.dashpy")
 
 
 def main():
