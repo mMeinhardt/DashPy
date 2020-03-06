@@ -24,9 +24,3 @@ def authenticate(password, hwtoken):
         return True
     logging.info("Mismatch detected. Authentication failed")
     return False
-
-def main():
-    authenticate("wasd", "wasdwasd")
-
-if __name__ == '__main__':
-    main()
