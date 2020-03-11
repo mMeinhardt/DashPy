@@ -9,13 +9,16 @@ def create_hwtoken():
     random_words = []
     for i in range(0, commons.AMOUNTWORDS):
         random_words.append(secrets.choice(dictionary))
-    logging.info('Generated ' + commons.AMOUNTWORDS + 'random words')
     random_bytes = []
     for i in range(0, commons.AMOUNTWORDS):
-        random_bytes.append(secrets.token_bytes(commons.AMOUNTBYTES))
+        random_bytes.append(secrets.token_bytes(commons.SIZEOFFILLBYTES))
     hwtoken = ''
-    for i in range(0, len(random_words))
+    for i in range(0, len(random_words)):
         index = secrets.randbelow(len(random_words))
-        hwtoken = random_words[index]
+        hwtoken = hwtoken + random_words[index]
         del random_words[index]
+        index = secrets.randbelow(len(random_bytes))
+        hwtoken = hwtoken + random_bytes[index].hex()
+        del random_bytes[index]
+    hwtoken = hwtoken.replace('\n', '').replace('\r', '')
     return hwtoken
