@@ -12,16 +12,14 @@ def authenticate(password, hwtoken):
             validation_data = json.load(json_file)
     except Exception:
         print("DashPy could not locate the authentication file. Make sure it is located under ~/.dashpy")
-    password_hash = sha384()
-    password_hash.update((password + validation_data["PWSalt"]).encode('utf-8'))
-    hwtoken_hash = sha384()
-    hwtoken_hash.update(hwtoken.encode('utf-8'))
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-    logging.info("Testing Password with SHA348 Hash:\n" + password_hash.hexdigest() + "\nagainst saved password:\n" + validation_data["Password"])
-    logging.info("Testing HWToken with SHA348 Hash:\n" + password_hash.hexdigest() + "\nagainst saved HWToken:\n" +
+    logging.info("Testing Password with SHA348 Hash:\n" + crypto.get_sha384_hex(password + validation_data["PWSalt"])
+               + "\nagainst saved password:\n" + validation_data["Password"])
+    logging.info("Testing HWToken with SHA348 Hash:\n" + crypto.get_sha384_hex(hwtoken)  + "\nagainst saved HWToken:\n" +
                  validation_data["HWToken"])
-    if((crypto.get_sha384_hex(password + validation_data["PWSalt"]) == validation_data["Password"]) and
+    if((crypto.get_sha384_hex(password + validation_data["PWSalt"]) == validation_data["Password"] ) and
         (crypto.get_sha384_hex(hwtoken) == validation_data["HWToken"])):
+        logging.info("Authentication successful")
         return True
 
     #if((password_hash.hexdigest() == validation_data["Password"]) and (hwtoken_hash.hexdigest() == validation_data["HWToken"])):
