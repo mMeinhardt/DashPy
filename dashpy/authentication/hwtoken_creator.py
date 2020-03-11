@@ -5,10 +5,7 @@ import secrets
 import logging
 
 def create_hwtoken():
-    dictionary = dict.read_dict()
-    random_words = []
-    for i in range(0, commons.AMOUNTWORDS):
-        random_words.append(secrets.choice(dictionary))
+    random_words = dict.get_random_words(commons.AMOUNTWORDS)
     random_bytes = []
     for i in range(0, commons.AMOUNTWORDS):
         random_bytes.append(secrets.token_bytes(commons.SIZEOFFILLBYTES))
