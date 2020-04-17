@@ -2,6 +2,7 @@
 
 
 import hashlib as hash
+import secrets
 
 def get_sha384_hex(input):
     hasher = hash.sha384()
@@ -14,7 +15,7 @@ def get_sha256_hex(input):
     return hasher.hexdigest()
 
 def get_sha256_bytes(input):
-    input =
+    input = to_bytes(input)
 
 def is_hex_str(s):
     if not isinstance(s, str):
@@ -35,3 +36,5 @@ def is_hash256(s):
 def encode_data():
 
 
+def create_salt():
+    return secrets.token_hex(commons.SALTLENGTH)
