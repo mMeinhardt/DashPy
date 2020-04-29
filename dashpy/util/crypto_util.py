@@ -17,9 +17,9 @@ def get_sha384_hex(input):
     return hasher.hexdigest()
 
 def get_sha256_hex(input):
-    hasher = hash.sha256()
-    hasher.update(input.encode('utf-8'))
-    return hasher.hexdigest()
+    if isinstance(input, bytes):
+        return hash.sha256(input).hexdigest()
+    return hash.sha256(to_bytes(input)).hexdigest()
 
 def get_sha256_bytes(input):
     input = to_bytes(input)
@@ -34,13 +34,12 @@ def is_hex_str(s):
         return False
     return True
 
-def is_hash256(s):
+def is_sha256(s):
     if not isinstance(s, str):
         return False
     if len(s) == 64:
         return False
     return is_hex_str(s)
-
 
 def encode_AES(plaindata, secret, salt):
     key = derive_key(util.to_bytes(secret), util.to_bytes(salt))
@@ -55,7 +54,7 @@ def decode_AES(cipherdata, secret, salt):
     return plaindata
 
 def derive_key(passphrase, salt):
-    key = hash.pbkdf2_hmac('sha256', to_bytes(passphrase), to_bytes(salt), commons.PBKDF2ITERATIONS)
+    key = hash.pbkdf2_hmac('blake2', to_bytes(passphrase), to_bytes(salt), commons.PBKDF2ITERATIONS)
     return key
 
 
