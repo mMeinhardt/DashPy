@@ -1,10 +1,9 @@
 import dashpy.util.crypto_util as cryptoutil
+import dashpy.util.util as util
+import dashpy.util.commons as commons
 import binascii
+import hashlib
 import os
-
-
-
-
 
 
 def generate_mnemonic(seed):
@@ -20,16 +19,17 @@ def generate_mnemonic(seed):
     for i in range(len(binary) // 11):
         wordindex = int(binary[i * 11 : (i+1) * 11], 2)
         mnemonic_sentence.append(wordlist[wordindex])
-    return mnemonic_sentence
+    return ' '.join(mnemonic_sentence)
 
-
-
+def mnemonic_to_seed(mnemonic):
+    stretched_seed = hashlib.pbkdf2_hmac("sha512", util.to_bytes(mnemonic), b"", commons.PBKDF2_ITERATION_MNEMONIC)
+    #Return 64 first bytes
+    return stretched_seed
 
 def load_wordlist():
     with open(get_directory() + "/english.txt", "r") as file:
         wordlist = [word.strip() for word in file.readlines()]
     return wordlist
-
 
 def get_directory():
     return os.path.join(os.path.dirname(__file__), "wordlists")

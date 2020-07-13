@@ -54,7 +54,7 @@ def decode_AES(cipherdata, secret, salt):
     return plaindata
 
 def derive_key(passphrase, salt):
-    key = hash.pbkdf2_hmac('blake2', to_bytes(passphrase), to_bytes(salt), commons.PBKDF2ITERATIONS)
+    key = hash.pbkdf2_hmac('sha256', to_bytes(passphrase), to_bytes(salt), commons.PBKDF2_ITERATIONS_ENCRYPTION)
     return key
 
 
