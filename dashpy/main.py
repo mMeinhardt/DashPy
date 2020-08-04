@@ -27,6 +27,7 @@ def main():
     parser_send_trx.add_argument('-f', '--funds',
                                  type=float,
                                  help='The amount of funds to send in DASH.')
+    parser_send_trx.set_defaults(func=commands.commanddict['send'])
 
     parser_export = subparsers.add_parser("export", help=ui_commons.export_wallet_help, description=ui_commons.export_wallet_desc)
     parser_export.add_argument('-p', '--path',
@@ -47,7 +48,7 @@ def main():
     parser_menu = subparsers.add_parser("menu", help=ui_commons.menu_help, description=ui_commons.menu_desc)
     parser_menu.set_defaults(func=commands.commanddict['menu'])
 
-    args = parser.parse_args(["restore"])
+    args = parser.parse_args(["send", "-a", "yasdhkjf", "-f", "3.4"])
     args.func(args)
 
 

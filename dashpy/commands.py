@@ -10,8 +10,9 @@ def check_trx_history(depth=10):
     for i in range(depth):
         print(f"Ich bin Transaktion {i}")
 
-def send_transaction(recv_addr, amount):
-    print(f"Sende {amount} an {recv_addr}")
+def send_transaction(args):
+    if args.address and args.funds:
+        print(f"Sende {args.funds} an {args.address}")
 
 def export_wallet(path=commons.DEFAULT_EXPORT_PATH):
     print(f"Exportiere Wallet nach: {path}")
