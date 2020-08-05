@@ -1,7 +1,45 @@
-import dashpy.util.commons as commons
 
-def initialize():
-    print("Ich initialisiere")
+import dashpy.util.commons as commons
+import dashpy.util.util as util
+import dashpy.authentication.authenticator as authenticator
+import getpass
+from dashpy.mnemonics.mnemonics import generate_mnemonic_12words, mnemonic_to_seed
+from dashpy.wallet.wallet import Wallet
+from dashpy.persistence.storage import Storage
+
+
+def initialize(args):
+    util.clear_console()
+    print("Welcome to DashPy, a lightweight wallet application for the Dash Cryptocurrency.\n\n"
+          "(Please note that this Wallet is still WIP at an early stage, and not connected to the Dash Main-Net yet.)\n\n"
+          "It seems like this is your first time starting this application, so we will have to initialize a few things first.\n"
+          "First, you have to enter a password. This is used for authentification and securing your wallet data on disk.\n")
+
+    password = getpass.getpass("Please type in your password: ")
+    re_password = getpass.getpass("Please type in your password again to confirm: ")
+    while not password == re_password:
+        password = getpass.getpass("The two given passwords don't match. Please type in your password again: ")
+        re_password = getpass.getpass("Please type your password again to confirm: ")
+    authenticator.save_pw(password)
+    util.clear_console()
+    print("""This is your mnemonic-sentence:\n""")
+    mnemonic_sentence = generate_mnemonic_12words()
+    print(mnemonic_sentence)
+    print("\nPlease write these words down. They can be used to restore your complete wallet in case of a loss.\n"
+          "It is advised against storing it on the same device as this wallet.\n")
+    confirmation = input("Have you written down your mnemonic-sentence? (if so, type 'yes'): ")
+    if confirmation != "yes":
+        print("exiting...")
+        exit(-1)
+    print("Generating keys and addresses now...")
+    seed = mnemonic_to_seed(mnemonic_sentence)
+    wallet = Wallet.init_from_seed(seed)
+    print("Saving and encrypting data on disk...")
+    storage = Storage(commons.WALLET_PATH)
+    storage.save_and_encrypt(wallet, util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
+    print("Done. You can now start using the Wallet. For a list of available commands type in 'dashpy --help'")
+
+
 
 def check_balance(currency):
     print(f"3 Dash (30{currency})")
@@ -29,6 +67,9 @@ def recieve(args=None):
 def main_menu(args=None):
     print("Ich bin das Hauptmenu")
 
+def import_wallet(args=None):
+    print("Ich importiere Wallets")
+
 commanddict = {'init': initialize,
                'balance': check_balance,
                'transaction history': check_trx_history,
@@ -36,4 +77,5 @@ commanddict = {'init': initialize,
                'export': export_wallet,
                'restore': restore_wallet,
                'receive': recieve,
-               'menu': main_menu}
+               'menu': main_menu,
+               'import': import_wallet}

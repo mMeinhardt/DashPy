@@ -21,6 +21,7 @@ DEFAULT_RESTORE_PATH = (str(Path.home())) + os.path.sep + "restoredwallet.json"
 
 KEYCHAIN_FILE_NAME = "keys.json"
 ADDRESSES_FILE_NAME = "addresses.json"
+AUTH_FILE_NAME = "auth.json"
 
 
 

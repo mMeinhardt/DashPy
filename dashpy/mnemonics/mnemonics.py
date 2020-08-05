@@ -4,7 +4,10 @@ import dashpy.util.commons as commons
 import binascii
 import hashlib
 import os
+import secrets
 
+def generate_mnemonic_12words():
+    return generate_mnemonic(secrets.token_bytes(16))
 
 def generate_mnemonic(seed):
     if len(seed) not in [16, 20, 24, 28, 32]:
