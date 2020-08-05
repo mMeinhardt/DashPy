@@ -12,7 +12,7 @@ def initialize(args):
     check_and_warn_if_wallet_exists()
     util.clear_console()
     print("Welcome to DashPy, a lightweight wallet application for the Dash Cryptocurrency.\n\n"
-          "(Please note that this Wallet is still WIP at an early stage, and not connected to the Dash Main-Net yet.)\n\n"
+          "(Disclaimer: Please note that this Wallet is still WIP at an early stage, and not connected to the Dash Main-Net yet. Therefore it is not ready for productive usage.)\n\n"
           "It seems like this is your first time starting this application, so we will have to initialize a few things first.\n"
           "First, you have to enter a password. This is used for authentification and securing your wallet data on disk.\n")
 
