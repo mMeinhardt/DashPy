@@ -18,7 +18,7 @@ def main():
                                       help="print the corresponding value additionally in the specified currency")
     parser_check_balance.set_defaults(func=commands.commanddict['balance'])
 
-    parser_check_trx = subparsers.add_parser("transaction history", help=ui_commons.check_trx_history_help, description=ui_commons.check_trx_history_desc)
+    parser_check_trx = subparsers.add_parser("transaction-history", help=ui_commons.check_trx_history_help, description=ui_commons.check_trx_history_desc)
     parser_check_trx.add_argument('-d', '--depth',
                                   type=int,
                                   help='specifies how many past transaction are printed. Default is 10')
@@ -53,7 +53,19 @@ def main():
     parser_menu = subparsers.add_parser("menu", help=ui_commons.menu_help, description=ui_commons.menu_desc)
     parser_menu.set_defaults(func=commands.commanddict['menu'])
 
-    args = parser.parse_args(sys.argv[1:])
+
+    parser_generate_new = subparsers.add_parser("generate-addresses",
+                                                help=ui_commons.generate_new_help,
+                                                description = ui_commons.generate_new_desc)
+    parser_generate_new.add_argument('-n', '--number',
+                                     type=int,
+                                     help="The amount of new addresses to be generated.")
+    parser_generate_new.set_defaults(func=commands.commanddict["generate-addresses"])
+
+    if(len(sys.argv) == 1):
+        args = parser.parse_args(["--help"])
+    else:
+        args = parser.parse_args(sys.argv[1:])
     args.func(args)
 
 

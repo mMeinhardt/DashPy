@@ -22,29 +22,15 @@ def get_salt():
         auth_json = json.load(file)
         return auth_json["salt"]
 
+def get_saved_pw_hash():
+    with open(commons.WALLET_PATH + commons.AUTH_FILE_NAME, 'r') as file:
+        auth_json = json.load(file)
+        return auth_json["password"]
 
 
-
-def authenticate(password, hwtoken):
-    homedir = expanduser('~')
-    try:
-        with open(homedir + '/.dashpy/authentication.json') as json_file:
-            validation_data = json.load(json_file)
-    except Exception:
-        print("DashPy could not locate the authentication file. Make sure it is located under ~/.dashpy")
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-    logging.info("Testing Password with SHA348 Hash:\n" + crypto.get_sha384_hex(password + validation_data["PWSalt"])
-               + "\nagainst saved password:\n" + validation_data["Password"])
-    logging.info("Testing HWToken with SHA348 Hash:\n" + crypto.get_sha384_hex(hwtoken)  + "\nagainst saved HWToken:\n" +
-                 validation_data["HWToken"])
-    if((crypto.get_sha384_hex(password + validation_data["PWSalt"]) == validation_data["Password"] ) and
-        (crypto.get_sha384_hex(hwtoken) == validation_data["HWToken"])):
-        logging.info("Authentication successful")
+def authenticate(password):
+    salt = get_salt()
+    pwhash = hashlib.pbkdf2_hmac('sha384', util.to_bytes(password), bytes.fromhex(salt), 10000)
+    if pwhash.hex() == get_saved_pw_hash():
         return True
-
-    #if((password_hash.hexdigest() == validation_data["Password"]) and (hwtoken_hash.hexdigest() == validation_data["HWToken"])):
-    #    logging.info("Authentication succesfull")
-    #    return True
-
-    logging.info("Mismatch detected. Authentication failed")
     return False

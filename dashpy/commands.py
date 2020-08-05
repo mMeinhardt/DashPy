@@ -70,6 +70,22 @@ def main_menu(args=None):
 def import_wallet(args=None):
     print("Ich importiere Wallets")
 
+def generate_new_addresses(args=None):
+    password = getpass.getpass("Please type in your password: ")
+    if not authenticator.authenticate(password):
+        print("Wrong password. Exiting...")
+        exit()
+    n_new_addresses = 0
+    if args.number:
+        n_new_addresses = args.number
+    else:
+        n_new_addresses = int(input("Enter how many new addresses should be generated: "))
+    storage = Storage(commons.WALLET_PATH)
+    wallet = storage.decrypt_and_load_full_wallet(util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
+    wallet.generate_new_adresses(n_new_addresses)
+    storage.save_and_encrypt(wallet, util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
+
+
 commanddict = {'init': initialize,
                'balance': check_balance,
                'transaction history': check_trx_history,
@@ -78,4 +94,5 @@ commanddict = {'init': initialize,
                'restore': restore_wallet,
                'receive': recieve,
                'menu': main_menu,
-               'import': import_wallet}
+               'import': import_wallet,
+               'generate-addresses': generate_new_addresses}

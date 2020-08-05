@@ -43,8 +43,7 @@ class Storage():
         with open(commons.WALLET_PATH + commons.ADDRESSES_FILE_NAME, 'wb') as addr_file:
             addr_file.write(crypto_util.encode_AES(util.to_bytes(addr_json), password, salt))
 
-
-        keys_dict = {"keys": wallet.keychain.get_hwifs(), "seed": bytes.hex(wallet.seed)}
+        keys_dict = {"keys": wallet.keychain.get_hwifs(), "seed": wallet.seed}
         keys_seed_json = json.dumps(keys_dict)
         with open(commons.WALLET_PATH + commons.KEYCHAIN_FILE_NAME, 'wb') as keys_file:
             keys_file.write(crypto_util.encode_AES(util.to_bytes(keys_seed_json), password, salt))

@@ -23,3 +23,7 @@ class Keychain():
             addresses.append(key.address())
         address_book = Address_book(addresses)
         return address_book
+
+    def add_keys(self, new_keys):
+        for new_key in new_keys:
+            self.keys.append(new_key)
