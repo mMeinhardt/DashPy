@@ -1,8 +1,9 @@
-from dashpy.dapi import json_rpc_wrapper
+from dashpy.dapi import dapi_wrapper
 
 def main():
-    json_rpc_wrapper.get_funds_from_addresses(["yPan6DeKoRSzvLBXvdWijh5rWzJGPYUr9B", "ySnJVXXx9FtKUBTkovPaPPqCkTMNzDLPCu"])
-
+    funds = dapi_wrapper.get_funds_from_addresses(["yNPbcFfabtNmmxKdGwhHomdYfVs6gikbPf"])
+    print(type(funds))
+    print(funds)
 
 
 
