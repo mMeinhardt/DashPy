@@ -62,6 +62,14 @@ def main():
                                      help="The amount of new addresses to be generated.")
     parser_generate_new.set_defaults(func=commands.commanddict["generate-addresses"])
 
+    parser_import = subparsers.add_parser("import",
+                                          help=ui_commons.import_help,
+                                          description=ui_commons.import_desc)
+    parser_import.add_argument('-p', '--path',
+                               type=str,
+                               help="The path to the wallet file to be imported.")
+    parser_import.set_defaults(func=commands.commanddict["import"])
+
     if(len(sys.argv) == 1):
         args = parser.parse_args(["--help"])
     else:

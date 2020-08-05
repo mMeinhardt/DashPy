@@ -37,3 +37,12 @@ def load_wordlist():
 def get_directory():
     return os.path.join(os.path.dirname(__file__), "wordlists")
 
+def is_valid_mnemonic(mnemonic_sentence):
+    words = mnemonic_sentence.split(" ")
+    wordlist = load_wordlist()
+    if len(words) != 12:
+        return False
+    for word in words:
+        if word not in wordlist:
+            return False
+    return True

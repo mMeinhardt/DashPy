@@ -9,6 +9,7 @@ restore_help = f"Asks the user for a mnemonic sentence, then restores the wallet
 receive_help = "Prints a Dash-address that can be used for receiving funds"
 menu_help = "Starts the application in interactive mode, displaying a menu."
 generate_new_help = "Generates new addresses for usage."
+import_help = "Imports the wallet file from the specified path. Will overwrite any existing wallet files, including private keys and addresses"
 
 init_desc = init_help + "Will ask the user for a passwort that is used for encrypting the wallet."
 check_balance_desc = check_balance_help
@@ -19,6 +20,7 @@ restore_desc = restore_help
 receive_desc = receive_help + ' Will try to print out an unsused address. If no unused addresses are available, it will print one randomly'
 menu_desc = menu_help
 generate_new_desc = generate_new_help
+import_desc = import_help
 
 
 

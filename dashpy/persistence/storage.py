@@ -20,7 +20,7 @@ class Storage():
         keys_json = self.decrypt_and_load_keys(password, salt)
         addresses = json.loads(address_json)
         keys = json.loads(keys_json)["keys"]
-        seed = json.loads(keys_json)["seed"]
+        seed = bytes.fromhex(json.loads(keys_json)["seed"])
         new_wallet = wallet.Wallet.create_full_wallet(addresses, seed, keys)
         return new_wallet
 
@@ -43,7 +43,7 @@ class Storage():
         with open(commons.WALLET_PATH + commons.ADDRESSES_FILE_NAME, 'wb') as addr_file:
             addr_file.write(crypto_util.encode_AES(util.to_bytes(addr_json), password, salt))
 
-        keys_dict = {"keys": wallet.keychain.get_hwifs(), "seed": wallet.seed}
+        keys_dict = {"keys": wallet.keychain.get_hwifs(), "seed": bytes.hex(wallet.seed)}
         keys_seed_json = json.dumps(keys_dict)
         with open(commons.WALLET_PATH + commons.KEYCHAIN_FILE_NAME, 'wb') as keys_file:
             keys_file.write(crypto_util.encode_AES(util.to_bytes(keys_seed_json), password, salt))
@@ -51,7 +51,7 @@ class Storage():
 
     def export_wallet(self, path, wallet):
         keys_hwifs = wallet.keychain.get_hwifs()
-        export_seed = util.bytes_to_utf8(wallet.seed)
+        export_seed = bytes.hex(wallet.seed)
         wallet_dict = {"addresses": wallet.address_book.addresses,
                        "keys": keys_hwifs,
                        "seed": export_seed}
@@ -76,3 +76,4 @@ class Storage():
         keys_json = json.dumps(keys_and_seed_dict, indent=4)
         with open(commons.WALLET_PATH + commons.KEYCHAIN_FILE_NAME, 'wb') as keys_file:
             keys_file.write(crypto_util.encode_AES(util.to_bytes(keys_json), password, salt))
+

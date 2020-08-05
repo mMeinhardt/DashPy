@@ -21,13 +21,14 @@ class Wallet():
     def generate_new_adresses(self, n):
         root_key = network.keys.bip32_seed(util.to_bytes(self.seed))
         n_current_keys = len(self.keychain.keys)
-        from_to_string = str(n_current_keys) + '-' + str(n)
+        from_to_string = str(n_current_keys) + '-' + str(n_current_keys + (n-1))
         new_keys = root_key.subkeys('0/0/0/0/' + from_to_string)
-        self.keychain.add_keys(new_keys)
-        addresses = []
         for key in new_keys:
-            addresses = key.address()
-        self.address_book.add_addresses(addresses)
+            self.keychain.keys.append(key)
+        for key in self.keychain.keys[n_current_keys:]:
+            self.address_book.addresses.append(key.address())
+
+
 
     @classmethod
     def create_full_wallet(cls, addresses, seed, keys):
@@ -37,7 +38,7 @@ class Wallet():
     @classmethod
     def init_from_seed(cls, seed):
         root_key = network.keys.bip32_seed(seed)
-        keys = root_key.subkeys('0/0/0/0/0-20')
+        keys = root_key.subkeys('0/0/0/0/0-19')
         keys_hwifs = []
         addresses = []
         for key in keys:

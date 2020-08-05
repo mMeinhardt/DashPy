@@ -1,5 +1,6 @@
 import logging
 import os
+import dashpy.util.commons as commons
 
 def clear_console():
     os.system('cls' if os.name=='nt' else 'clear')
@@ -31,3 +32,8 @@ def write_encrypted_data_to_file(data, path):
     finally:
         if file is not None:
             file.close()
+
+def is_wallet_existing():
+    if(os.path.exists(commons.WALLET_PATH)):
+        return True
+    return False
