@@ -12,6 +12,9 @@ def to_bytes(data, encoding='utf-8'):
     else:
         raise TypeError('Neither string or byte object')
 
+def bytes_to_utf8(bytes_data):
+    return bytes_data.decode()
+
 
 def write_encrypted_data_to_file(data, path):
     assert_bytes(data)

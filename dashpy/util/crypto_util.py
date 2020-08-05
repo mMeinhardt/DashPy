@@ -51,7 +51,7 @@ def decode_AES(cipherdata, secret, salt):
     key = derive_key(util.to_bytes(secret), util.to_bytes(salt))
     aes = pyaes.AESModeOfOperationCTR(key)
     plaindata = aes.decrypt(cipherdata)
-    return plaindata
+    return util.bytes_to_utf8(plaindata)
 
 def derive_key(passphrase, salt):
     key = hash.pbkdf2_hmac('sha256', to_bytes(passphrase), to_bytes(salt), commons.PBKDF2_ITERATIONS_ENCRYPTION)
