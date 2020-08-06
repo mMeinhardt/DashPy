@@ -1,0 +1,16 @@
+import os
+
+clear = lambda: os.system('clear')
+clear()
+print("Welcome to your Dash wallet")
+print("\n\nYour Options:")
+print("<1> - Show current balance")
+print("<2> - Show transaction history")
+print("<3> - Send DASH")
+print("<4> - Recieve DASH")
+print("<5> - Generate new addresses")
+print("<6> - Export wallet data")
+print("<7> - Import wallet data")
+print("<8> - Restore wallet via mnemonic sentence")
+print("<9> - Exit the wallet")
+input("To choose an option, type in the corresponding number and hit Enter: ")

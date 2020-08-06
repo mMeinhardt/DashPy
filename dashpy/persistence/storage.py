@@ -3,7 +3,7 @@ import json
 import dashpy.util.crypto_util as crypto_util
 import dashpy.util.util as util
 import dashpy.util.commons as commons
-import dashpy.wallet.wallet as wallet
+from dashpy.wallet.wallet import Wallet
 import io
 
 
@@ -21,7 +21,7 @@ class Storage():
         addresses = json.loads(address_json)
         keys = json.loads(keys_json)["keys"]
         seed = bytes.fromhex(json.loads(keys_json)["seed"])
-        new_wallet = wallet.Wallet.create_full_wallet(addresses, seed, keys)
+        new_wallet = Wallet.create_full_wallet(addresses, seed, keys)
         return new_wallet
 
     def decrypt_and_load_addresses(self, password, salt):
@@ -77,3 +77,8 @@ class Storage():
         with open(commons.WALLET_PATH + commons.KEYCHAIN_FILE_NAME, 'wb') as keys_file:
             keys_file.write(crypto_util.encode_AES(util.to_bytes(keys_json), password, salt))
 
+    def load_watching_only_wallet(self, password, salt):
+        addresses_json = self.decrypt_and_load_addresses(password, salt)
+        addresses = json.loads(addresses_json)
+        wallet = Wallet.create_watching_only_wallet(addresses=addresses)
+        return wallet

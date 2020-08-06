@@ -26,7 +26,7 @@ def get_trxids_from_addresses(addresses):
 
 
 
-def get_funds_from_addresses(addresses):
+def get_balance_from_addresses(addresses):
     connection_url = "http://seed.evonet.networks.dash.org:3000/"
     payload = { "method": "getAddressSummary",
                 "id": 1,
@@ -51,4 +51,26 @@ def get_trx_details(trx_id):
     dec_string = base64.b64encode(response.transaction)
     hex_tx = bytes.hex(response.transaction)
     tx = network.Tx.from_hex(hex_tx)
-    print(tx)
+    return tx
+
+def is_address_used(address):
+    connection_url = "http://seed.evonet.networks.dash.org:3000/"
+    payload = {"method": "getAddressSummary",
+               "id": 1,
+               "jsonrpc": "2.0",
+               "params": {
+                   "address": [address]
+               }
+               }
+    payload_json = json.dumps(payload)
+    http_headers = {"content-type": "application/json"}
+    response_data_json = requests.request("POST", connection_url, data=payload_json, headers=http_headers)
+    response_data = json.loads(response_data_json.text)
+    return response_data["result"]["txApperances"] > 0
+
+
+def get_utxo_from_address(address):
+    pass
+
+def send_trx(transaction):
+    pass

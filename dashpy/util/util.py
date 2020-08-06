@@ -1,6 +1,9 @@
 import logging
 import os
 import dashpy.util.commons as commons
+import dashpy.util.user_interaction_commons as ui_commons
+import requests
+import json
 
 def clear_console():
     os.system('cls' if os.name=='nt' else 'clear')
@@ -37,3 +40,35 @@ def is_wallet_existing():
     if(os.path.exists(commons.WALLET_PATH)):
         return True
     return False
+
+def get_exchange_rate(symbol):
+    if symbol not in ui_commons.currency_symbols:
+        raise ValueError("Not a currency symbol")
+    url = f"https://api.coingecko.com/api/v3/simple/price?ids=DASH&vs_currencies={symbol}"
+    http_headers = {'content-type': 'application/json'}
+    response_data_json = requests.request("GET", url, headers=http_headers)
+    response = json.loads(response_data_json.text)
+    return response["dash"][symbol.lower()]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

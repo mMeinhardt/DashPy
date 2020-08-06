@@ -6,10 +6,12 @@ from dashpy.wallet.address_book import Address_book
 
 class Keychain():
     def __init__(self, keys):
-        self.keys = []
-
-        for key in keys:
-            self.keys.append(network.parse.bip32(key))
+        if keys == None:
+            self.keys = None
+        else:
+            self.keys = []
+            for key in keys:
+                self.keys.append(network.parse.bip32(key))
 
     def get_hwifs(self):
         hwifs = []

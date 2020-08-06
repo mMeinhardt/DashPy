@@ -5,6 +5,7 @@ import dashpy.wallet.keychain as keychain
 from dashpy.wallet.address_book import Address_book
 from dashpy.wallet.keychain import Keychain
 from dashpy.util import util
+import dashpy.dapi.dapi_wrapper as dapi
 
 
 class Wallet():
@@ -16,7 +17,8 @@ class Wallet():
 
 
     def get_balance(self):
-        return 343984
+        balance = dapi.get_balance_from_addresses(self.address_book.addresses)
+        return balance
 
     def generate_new_adresses(self, n):
         root_key = network.keys.bip32_seed(util.to_bytes(self.seed))
@@ -27,6 +29,12 @@ class Wallet():
             self.keychain.keys.append(key)
         for key in self.keychain.keys[n_current_keys:]:
             self.address_book.addresses.append(key.address())
+
+    def get_recv_address(self):
+        address = self.address_book.get_unused_address()
+        if address is None:
+            return (False, self.address_book.get_random_addr())
+        return (True, address)
 
 
 
@@ -45,4 +53,9 @@ class Wallet():
             keys_hwifs.append(key.hwif(as_private=1))
             addresses.append(key.address())
         wallet = Wallet(seed, addresses=addresses, keys=keys_hwifs)
+        return wallet
+
+    @classmethod
+    def create_watching_only_wallet(cls, addresses):
+        wallet = Wallet(seed=None, addresses=addresses, keys=None)
         return wallet
