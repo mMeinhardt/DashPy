@@ -71,7 +71,7 @@ def check_trx_history(args):
         print(f"Transaction #{i}: ")
         print("From:")
         for txin in trx["txin"]:
-            print("\t" + txin["address"], end='')
+            print(f"\t{util.duff_to_dash(txin['duffs'])}  Dash from {txin['address']}", end='')
             print(" (your address)") if txin["own"] else print("")
         print("To: ")
         for txout in trx["txout"]:

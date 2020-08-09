@@ -1,5 +1,6 @@
 import json
 import os
+import dashpy.util.trx_util as trx_util
 from pycoin.symbols.tdash import network
 from pycoin.vm.ScriptTools import ScriptTools
 import dashpy.wallet.keychain as keychain
@@ -47,15 +48,15 @@ class Wallet():
         for trx_bytes in trxs_bytes:
             trxs.append(network.Tx.from_hex(bytes.hex(trx_bytes)))
         parsed_trx = []
-        print(len(trxs))
         for trx in trxs:
             trx_dict = {"txin": [], "txout": []}
             for txin in trx.txs_in:
                 address = txin.address(network.address)
+                duffs = trx_util.get_duffs_from_trxin(txin)
                 is_own_addr = False
                 if address in self.address_book.addresses:
                     is_own_addr = True
-                trx_dict["txin"].append({"address": address, "own": is_own_addr})
+                trx_dict["txin"].append({"duffs": duffs, "address": address, "own": is_own_addr})
             for txout in trx.txs_out:
                 duffs = txout.coin_value
                 api = network.address
