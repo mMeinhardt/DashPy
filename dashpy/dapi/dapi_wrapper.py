@@ -48,10 +48,7 @@ def get_trx_details(trx_id):
     request_object = core_pb2.GetTransactionRequest()
     request_object.id = trx_id
     response = stub.getTransaction(request_object)
-    dec_string = base64.b64encode(response.transaction)
-    hex_tx = bytes.hex(response.transaction)
-    tx = network.Tx.from_hex(hex_tx)
-    return tx
+    return response.transaction
 
 def is_address_used(address):
     connection_url = "http://seed.evonet.networks.dash.org:3000/"

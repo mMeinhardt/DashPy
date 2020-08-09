@@ -1,7 +1,7 @@
 import dashpy.dapi.dapi_wrapper as dapi
 import random
 
-class Address_book():
+class AddressBook():
     def __init__(self, addresses):
         self.addresses = addresses
 

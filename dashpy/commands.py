@@ -1,6 +1,6 @@
 import dashpy.util.commons as commons
 import dashpy.util.util as util
-import dashpy.authentication.authenticator as authenticator
+import dashpy.authentication.authentication as authenticator
 import getpass
 from dashpy.wallet.mnemonics import generate_mnemonic_12words, mnemonic_to_seed, is_valid_mnemonic
 from dashpy.wallet.wallet import Wallet
@@ -40,8 +40,6 @@ def initialize(args):
     storage.save_and_encrypt(wallet, util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
     print("Done. You can now start using the Wallet. For a list of available commands type in 'dashpy --help'")
 
-
-
 def check_balance(args=None):
     check_if_wallet_init()
     password = getpass.getpass("Please type in your password: ")
@@ -57,14 +55,31 @@ def check_balance(args=None):
             value = wallet.get_balance() * util.get_exchange_rate(args.currency)
             print(f"{round(value, 2)} {args.currency}") if args.currency in ["EUR", "USD"] else print(f"{value} {args.currency}")
 
-
 def check_trx_history(args):
     check_if_wallet_init()
+    password = getpass.getpass("Please type in your password: ")
+    if not authenticator.authenticate(password):
+        print("Wrong password. Exiting...")
+        exit()
     n = 10
     if args is not None and args.depth:
         n = args.depth
-    for i in range(n):
-        print(f"Ich bin Transaktion {i}")
+    storage = Storage(commons.WALLET_PATH)
+    wallet = storage.decrypt_and_load_full_wallet(util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
+    i = 1
+    for trx in wallet.get_trx_history(n):
+        print(f"Transaction #{i}: ")
+        print("From:")
+        for txin in trx["txin"]:
+            print("\t" + txin["address"], end='')
+            print(" (your address)") if txin["own"] else print("")
+        print("To: ")
+        for txout in trx["txout"]:
+            print(f"\t{util.duff_to_dash(txout['duffs'])} DASH to {txout['address']}", end='')
+            print(" (your address)") if txout["own"] else print("")
+        print("")
+        i = i+1
+
 
 def send_transaction(args):
     check_if_wallet_init()
@@ -92,9 +107,6 @@ def export_wallet(args=None):
         print("Could not export the wallet to a file. Please check the specified path.")
         print("Exiting...")
 
-
-
-
 def restore_wallet(args=None):
     check_if_wallet_init()
     path = None
@@ -118,11 +130,6 @@ def restore_wallet(args=None):
         print("Could not export the restored wallet to a file. Please check the specified path.")
         print("Exiting...")
         exit()
-
-
-
-
-
 
 def recieve(args=None):
     check_if_wallet_init()
@@ -167,7 +174,6 @@ def main_menu(args=None):
     util.clear_console()
     command(None)
 
-
 def import_wallet(args=None):
     check_if_wallet_init()
     password = getpass.getpass("Please type in your password: ")
@@ -191,7 +197,6 @@ def import_wallet(args=None):
         print("exiting...")
         exit()
 
-
 def generate_new_addresses(args=None):
     check_if_wallet_init()
     password = getpass.getpass("Please type in your password: ")
@@ -210,8 +215,6 @@ def generate_new_addresses(args=None):
     storage.save_and_encrypt(wallet, util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
     print("Done.")
 
-
-
 def check_and_warn_if_wallet_exists():
     if (util.is_wallet_existing()):
         print("There is already a directory and files for an existing Wallet. Do you want to override them?\n"
@@ -227,7 +230,7 @@ def check_if_wallet_init():
         print("There seems to be no existing wallet. Please run the init command first to create one.")
         exit()
 
-commanddict = {'init': initialize,
+command_dict = {'init': initialize,
                'balance': check_balance,
                'transaction history': check_trx_history,
                'send': send_transaction,
@@ -237,7 +240,7 @@ commanddict = {'init': initialize,
                'menu': main_menu,
                'import': import_wallet,
                'generate-addresses': generate_new_addresses
-               }
+                }
 
 commandlist = [
     check_balance,

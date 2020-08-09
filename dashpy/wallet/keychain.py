@@ -1,7 +1,7 @@
 import hmac
 import hashlib
 from pycoin.symbols.tdash import network
-from dashpy.wallet.address_book import Address_book
+from dashpy.wallet.addressbook import AddressBook
 
 
 class Keychain():
@@ -23,7 +23,7 @@ class Keychain():
         addresses = []
         for key in self.keys():
             addresses.append(key.address())
-        address_book = Address_book(addresses)
+        address_book = AddressBook(addresses)
         return address_book
 
     def add_keys(self, new_keys):
