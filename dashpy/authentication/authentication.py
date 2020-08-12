@@ -30,7 +30,7 @@ def get_saved_pw_hash():
 
 def authenticate(password):
     salt = get_salt()
-    pwhash = hashlib.pbkdf2_hmac('sha384', util.to_bytes(password), bytes.fromhex(salt), 10000)
+    pwhash = hashlib.pbkdf2_hmac('sha384', util.to_bytes(password), bytes.fromhex(salt), 100000)
     if pwhash.hex() == get_saved_pw_hash():
         return True
     return False

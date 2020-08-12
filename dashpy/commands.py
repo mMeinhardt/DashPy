@@ -102,9 +102,15 @@ def send_transaction(args):
             funds = float(input("Enter the amount to send in DASH: "))
         except ValueError:
             print("Not a valid number.\Exiting...")
+
     storage = Storage(commons.WALLET_PATH)
     wallet = storage.decrypt_and_load_full_wallet(util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
-
+    if wallet.get_balance() < (funds + util.duff_to_dash(commons.TRANSACTION_FEE)):
+        print("Insufficient Funds for this transaction\nExiting...")
+        exit(-1)
+    if not util.is_dash_addr(to):
+        print("Not a valid Dash-Address.\nExiting...")
+        exit(-1)
     wallet.create_and_send_transaction(to, funds)
     print(f"Sent {funds} DASH to {to}")
     storage.save_and_encrypt(wallet, util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
@@ -248,7 +254,7 @@ def generate_new_addresses(args=None):
 def check_and_warn_if_wallet_exists():
     if (util.is_wallet_existing()):
         print("There is already a directory and files for an existing Wallet. Do you want to override them?\n"
-              "Please note, that this action will make you most likely lose all your current keys, adresses and the corresponding funds."
+              "Please note, that this action will make you most likely lose all your current keys, adresses and the corresponding funds.\n"
               "It is advised, that you back up the current wallet files first with the export command.\n")
         answer = input("Do you still want to continue? [yes/no]")
         if answer != "yes":

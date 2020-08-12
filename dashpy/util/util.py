@@ -50,6 +50,17 @@ def get_exchange_rate(symbol):
     response = json.loads(response_data_json.text)
     return response["dash"][symbol.lower()]
 
+
+def is_dash_addr(addr):
+    if not isinstance(addr, str):
+        return False
+    if not addr[0] == 'y':
+        return False
+    if not 25 <= len(addr) <= 34:
+        return False
+    return True
+
+
 def duff_to_dash(duff):
     return duff / 100000000
 
