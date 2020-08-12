@@ -3,10 +3,13 @@ import os
 import dashpy.util.trx_util as trx_util
 from pycoin.symbols.tdash import network
 from pycoin.vm.ScriptTools import ScriptTools
+import pycoin.coins.bitcoin.Spendable as Spendable
+import pycoin.coins.tx_utils as tx_utils
 import dashpy.wallet.keychain as keychain
 from dashpy.wallet.addressbook import AddressBook
 from dashpy.wallet.keychain import Keychain
 from dashpy.util import util
+from dashpy.util import commons
 import dashpy.dapi.dapi_wrapper as dapi
 
 
@@ -22,6 +25,17 @@ class Wallet():
         balance = dapi.get_balance_from_addresses(self.address_book.addresses)
         return balance
 
+    def generate_change_address(self):
+        root_key = network.keys.bip32_seed(self.seed)
+        n_current_keys = len(self.keychain.keys)
+        new_key = root_key.subkey_for_path('0/0/0/' + str(n_current_keys))
+        self.keychain.keys.append(new_key)
+        self.address_book.addresses.append(new_key.address())
+        return self.address_book.addresses[-1]
+
+
+
+
     def generate_new_adresses(self, n):
         root_key = network.keys.bip32_seed(self.seed)
         n_current_keys = len(self.keychain.keys)
@@ -35,7 +49,9 @@ class Wallet():
     def get_recv_address(self):
         address = self.address_book.get_unused_address()
         if address is None:
-            return (False, self.address_book.get_random_addr())
+            self.generate_new_adresses(1)
+            address = self.address_book.addresses[-1]
+            return (False, address)
         return (True, address)
 
 
@@ -48,7 +64,10 @@ class Wallet():
         for trx_bytes in trxs_bytes:
             trxs.append(network.Tx.from_hex(bytes.hex(trx_bytes)))
         parsed_trx = []
+        index = 0
         for trx in trxs:
+            if index >= n:
+                break
             trx_dict = {"txin": [], "txout": []}
             for txin in trx.txs_in:
                 address = txin.address(network.address)
@@ -70,12 +89,62 @@ class Wallet():
 
                 out_dict = {"duffs": duffs, "address": address, "own": is_own_addr}
                 trx_dict["txout"].append(out_dict)
-            parsed_trx.append(trx_dict)
+            index = index + 1
+            yield trx_dict
 
-        n = n if n <= len(trxs) else len(trxs)
-        print(len(parsed_trx))
-        return parsed_trx
 
+    def create_and_send_transaction(self, to, amount):
+        utxos = self.get_needed_utxos(amount)
+        amount_duffs = util.dash_to_duff(amount)
+        utxos = self.get_needed_utxos(amount_duffs)
+        spendables = []
+        for utxo in utxos[1]:
+            spendable_dict = {"coin_value": utxo[0]["satoshis"],
+                              "script_hex": utxo[0]["script"],
+                              "tx_hash_hex": utxo[0]["txid"],
+                              "tx_out_index": utxo[0]["outputIndex"],
+                              }
+            spendables.append(Spendable.Spendable.from_dict(spendable_dict))
+
+        change_address = self.generate_change_address()
+
+        change_amount = utxos[0] -  (amount_duffs + commons.TRANSACTION_FEE)
+
+        outputs = [(change_address, change_amount)]
+        outputs.append((to, amount_duffs))
+        keys_to_sign = []
+        for output in utxos[1]:
+            keys_to_sign.append(self.keychain.keys[output[1]].wif())
+
+        trx = tx_utils.create_signed_tx(network, spendables, outputs, wifs=keys_to_sign, fee=commons.TRANSACTION_FEE)
+        print(type(trx.as_bin()))
+        print(trx.check_solution(0))
+
+        dapi.send_trx(trx.as_bin())
+
+
+
+
+
+
+
+    def get_needed_utxos(self, amount_duffs):
+        amount_in = 0
+        utxos = []
+        index = 0
+        for address in self.address_book.addresses:
+            answer = dapi.get_utxo_from_address(address)
+            for utxo in answer["result"]["items"]:
+                amount = utxo["satoshis"]
+                utxos.append((utxo, index))
+                amount_in = amount_in + amount
+                if(amount_in + commons.TRANSACTION_FEE) > amount_duffs:
+                    return amount_in, utxos
+            index = index + 1
+
+
+    def create_change_address(self):
+        self.generate_new_adresses()
 
 
     @classmethod

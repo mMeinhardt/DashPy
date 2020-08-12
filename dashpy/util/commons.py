@@ -23,5 +23,7 @@ KEYCHAIN_FILE_NAME = "keys.json"
 ADDRESSES_FILE_NAME = "addresses.json"
 AUTH_FILE_NAME = "auth.json"
 
+TRANSACTION_FEE = 1000000.0
+
 
 

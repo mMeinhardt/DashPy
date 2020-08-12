@@ -54,10 +54,10 @@ def duff_to_dash(duff):
     return duff / 100000000
 
 def dash_to_duff(dash):
-    return dash * 100000000
+    return int(dash * 100000000)
 
 def mdash_to_duff(mdash):
-    return mdash * 100000
+    return int(mdash * 100000)
 
 def mdash_to_dash(mdash):
     return mdash / 1000
@@ -66,7 +66,7 @@ def duff_to_mdash(duff):
     return duff / 100000
 
 def dash_to_mdash(dash):
-    return dash * 1000
+    return int(dash * 1000)
 
 
 

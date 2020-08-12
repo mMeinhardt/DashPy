@@ -83,8 +83,38 @@ def check_trx_history(args):
 
 def send_transaction(args):
     check_if_wallet_init()
-    if args is not None and args.address and args.funds:
-        print(f"Sende {args.funds} an {args.address}")
+    password = getpass.getpass("Please type in your password: ")
+    if not authenticator.authenticate(password):
+        print("Wrong password. Exiting...")
+        exit()
+
+    to = None
+    funds = None
+
+    if args is not None and args.address:
+        to = args.address
+    else:
+        to = input("Enter the address you want to send DASH to: ")
+    if args is not None and args.funds:
+        funds = args.funds
+    else:
+        try:
+            funds = float(input("Enter the amount to send in DASH: "))
+        except ValueError:
+            print("Not a valid number.\Exiting...")
+    storage = Storage(commons.WALLET_PATH)
+    wallet = storage.decrypt_and_load_full_wallet(util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
+
+    wallet.create_and_send_transaction(to, funds)
+    print(f"Sent {funds} DASH to {to}")
+    storage.save_and_encrypt(wallet, util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
+
+
+
+
+
+
+
 
 def export_wallet(args=None):
     check_if_wallet_init()
@@ -141,8 +171,8 @@ def recieve(args=None):
     wallet = storage.load_watching_only_wallet(util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
     recieve_response = wallet.get_recv_address()
     if not recieve_response[0]:
-        print("Warning. You have no unused addresses left. It is advised against using an address multiple times."
-              "\nYou can generate new addresses with the generate-addresses command.")
+        print("Warning. You have no unused addresses left. Generating a new Address..."
+              "\nYou can generate new addresses manually with the generate-addresses command.")
 
     print("Use this address to recieve Dash: ")
     print(recieve_response[1])
@@ -232,7 +262,7 @@ def check_if_wallet_init():
 
 command_dict = {'init': initialize,
                'balance': check_balance,
-               'transaction history': check_trx_history,
+               'transaction-history': check_trx_history,
                'send': send_transaction,
                'export': export_wallet,
                'restore': restore_wallet,

@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 import dashpy.commands as commands
 import argparse
 import dashpy.util.user_interaction_commons as ui_commons
@@ -22,7 +25,7 @@ def main():
     parser_check_trx.add_argument('-d', '--depth',
                                   type=int,
                                   help='specifies how many past transaction are printed. Default is 10')
-    parser_check_trx.set_defaults(func=commands.command_dict['transaction history'])
+    parser_check_trx.set_defaults(func=commands.command_dict['transaction-history'])
 
     parser_send_trx = subparsers.add_parser("send", help=ui_commons.send_trx_help, description=ui_commons.send_trx_desc)
     parser_send_trx.add_argument('-a', '--address',

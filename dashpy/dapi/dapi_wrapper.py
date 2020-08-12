@@ -57,17 +57,34 @@ def is_address_used(address):
                "jsonrpc": "2.0",
                "params": {
                    "address": [address]
-               }
+                   }
                }
     payload_json = json.dumps(payload)
     http_headers = {"content-type": "application/json"}
     response_data_json = requests.request("POST", connection_url, data=payload_json, headers=http_headers)
     response_data = json.loads(response_data_json.text)
-    return response_data["result"]["txApperances"] > 0
+    return response_data["result"]["txAppearances"] > 0
 
 
 def get_utxo_from_address(address):
-    pass
+    connection_url = "http://seed.evonet.networks.dash.org:3000/"
+    payload = {"method": "getUTXO",
+               "id": 1,
+               "jsonrpc": "2.0",
+               "params": {
+                   "address": [address]
+                   }
+               }
+    payload_json = json.dumps(payload)
+    http_headers = {"content-type": "application/json"}
+    response_data_json = requests.request("POST", connection_url, data=payload_json, headers=http_headers)
+    response_data = json.loads(response_data_json.text)
+    return response_data
 
 def send_trx(transaction):
-    pass
+    channel = grpc.insecure_channel('seed.evonet.networks.dash.org:3010')
+    stub = core_pb2_grpc.CoreStub(channel)
+    request_object = core_pb2.SendTransactionRequest()
+    request_object.transaction = transaction
+    response = stub.sendTransaction(request_object)
+    return True

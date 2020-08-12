@@ -25,9 +25,8 @@ def generate_mnemonic(seed):
     return ' '.join(mnemonic_sentence)
 
 def mnemonic_to_seed(mnemonic):
-    stretched_seed = hashlib.pbkdf2_hmac("sha512", util.to_bytes(mnemonic), b"", commons.PBKDF2_ITERATION_MNEMONIC)
-    #Return 64 first bytes
-    return stretched_seed
+    seed = hashlib.pbkdf2_hmac("sha512", util.to_bytes(mnemonic), b"", commons.PBKDF2_ITERATION_MNEMONIC)
+    return seed
 
 def load_wordlist():
     with open(get_directory() + "/english.txt", "r") as file:
@@ -39,9 +38,9 @@ def get_directory():
 
 def is_valid_mnemonic(mnemonic_sentence):
     words = mnemonic_sentence.split(" ")
-    wordlist = load_wordlist()
-    if len(words) != 12:
+    if len(words) not in [12, 15, 18, 21, 24]:
         return False
+    wordlist = load_wordlist()
     for word in words:
         if word not in wordlist:
             return False

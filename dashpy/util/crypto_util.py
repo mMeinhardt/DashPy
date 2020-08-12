@@ -41,13 +41,13 @@ def is_sha256(s):
         return False
     return is_hex_str(s)
 
-def encode_AES(plaindata, secret, salt):
+def encrypt_AES(plaindata, secret, salt):
     key = derive_key(util.to_bytes(secret), util.to_bytes(salt))
     aes = pyaes.AESModeOfOperationCTR(key)
     cipherdata = aes.encrypt(plaindata)
     return cipherdata
 
-def decode_AES(cipherdata, secret, salt):
+def decrypt_AES(cipherdata, secret, salt):
     key = derive_key(util.to_bytes(secret), util.to_bytes(salt))
     aes = pyaes.AESModeOfOperationCTR(key)
     plaindata = aes.decrypt(cipherdata)
