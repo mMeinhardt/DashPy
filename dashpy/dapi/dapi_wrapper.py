@@ -87,4 +87,3 @@ def send_trx(transaction):
     request_object = core_pb2.SendTransactionRequest()
     request_object.transaction = transaction
     response = stub.sendTransaction(request_object)
-    return True

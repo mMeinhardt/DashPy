@@ -113,10 +113,8 @@ def send_transaction(args):
     if not util.is_dash_addr(to):
         print("Not a valid Dash-Address.\nExiting...")
         exit(-1)
-    if(wallet.create_and_send_transaction(to, funds)):
-        print(f"Sent {funds} DASH to {to}")
-    else:
-        print("Something went wrong. Transaction could not be sent.")
+    wallet.create_and_send_transaction(to, funds)
+    print(f"Sent {funds} DASH to {to}")
     storage.save_and_encrypt(wallet, util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
 
 

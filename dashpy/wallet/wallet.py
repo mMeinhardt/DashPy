@@ -94,9 +94,10 @@ class Wallet():
 
 
     def create_and_send_transaction(self, to, amount):
-        utxos = self.get_needed_utxos(amount)
         amount_duffs = util.dash_to_duff(amount)
+
         utxos = self.get_needed_utxos(amount_duffs)
+
         spendables = []
         for utxo in utxos[1]:
             spendable_dict = {"coin_value": utxo[0]["satoshis"],
@@ -107,9 +108,7 @@ class Wallet():
             spendables.append(Spendable.Spendable.from_dict(spendable_dict))
 
         change_address = self.generate_change_address()
-
         change_amount = utxos[0] -  (amount_duffs + commons.TRANSACTION_FEE)
-
         outputs = [(change_address, change_amount)]
         outputs.append((to, amount_duffs))
         keys_to_sign = []
@@ -117,10 +116,9 @@ class Wallet():
             keys_to_sign.append(self.keychain.keys[output[1]].wif())
 
         trx = tx_utils.create_signed_tx(network, spendables, outputs, wifs=keys_to_sign, fee=commons.TRANSACTION_FEE)
-        print(type(trx.as_bin()))
-        print(trx.check_solution(0))
 
         dapi.send_trx(trx.as_bin())
+
 
 
 
