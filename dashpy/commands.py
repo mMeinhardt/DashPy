@@ -79,6 +79,8 @@ def check_trx_history(args):
             print(" (your address)") if txout["own"] else print("")
         print("")
         i = i+1
+    if i == 1:
+        print("Found no Transactions for this wallet.")
 
 
 def send_transaction(args):
@@ -111,8 +113,10 @@ def send_transaction(args):
     if not util.is_dash_addr(to):
         print("Not a valid Dash-Address.\nExiting...")
         exit(-1)
-    wallet.create_and_send_transaction(to, funds)
-    print(f"Sent {funds} DASH to {to}")
+    if(wallet.create_and_send_transaction(to, funds)):
+        print(f"Sent {funds} DASH to {to}")
+    else:
+        print("Something went wrong. Transaction could not be sent.")
     storage.save_and_encrypt(wallet, util.to_bytes(password), bytes.fromhex(authenticator.get_salt()))
 
 
