@@ -28,7 +28,7 @@ class Wallet():
     def generate_change_address(self):
         root_key = network.keys.bip32_seed(self.seed)
         n_current_keys = len(self.keychain.keys)
-        new_key = root_key.subkey_for_path('0/0/0/' + str(n_current_keys))
+        new_key = root_key.subkey_for_path('0/0/0/0/' + str(n_current_keys))
         self.keychain.keys.append(new_key)
         self.address_book.addresses.append(new_key.address())
         return self.address_book.addresses[-1]
