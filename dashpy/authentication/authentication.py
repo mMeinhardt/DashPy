@@ -7,12 +7,16 @@ import logging
 import json
 import secrets
 import hashlib
+import os
 
 def save_pw(password):
     salt = secrets.token_hex(8)
     pwhash = hashlib.pbkdf2_hmac('sha384', util.to_bytes(password), bytes.fromhex(salt), 100000)
     pw_dict = {"password": pwhash.hex(), "salt": salt}
     json_str = json.dumps(pw_dict, indent=4)
+    directory = os.path.dirname(commons.WALLET_PATH)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     with open(commons.WALLET_PATH + commons.AUTH_FILE_NAME, "w") as auth_file:
         auth_file.write(json_str)
 
@@ -34,3 +38,4 @@ def authenticate(password):
     if pwhash.hex() == get_saved_pw_hash():
         return True
     return False
+
